@@ -36,14 +36,46 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NameScreen(modifier: Modifier = Modifier) {
+    // 1. Состояние (state) хранится здесь, в "умном" компоненте
     var name by rememberSaveable { mutableStateOf("") }
 
     Column(modifier = modifier.padding(24.dp)) {
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") }
+        // 2. Передаем состояние ВНИЗ, а событие изменения ВВЕРХ
+        NameField(
+            name = name,
+            onNameChange = { name = it }
         )
         Text("Hello, $name!")
+    }
+}
+
+@Composable
+fun NameField(
+    name: String,
+    onNameChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // 3. Этот компонент "глупый" (stateless). Он ничего сам не помнит,
+    // а просто отображает то, что ему дали, и сообщает о кликах/вводе.
+    OutlinedTextField(
+        value = name,
+        onValueChange = onNameChange,
+        label = { Text("Name") },
+        modifier = modifier
+    )
+}
+
+// 4. Превью для проверки в правой панели Android Studio без запуска эмулятора
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun NameFieldPreview() {
+    ComposeArchLabTheme {
+        // Добавляем Surface, чтобы задать правильный цвет фона и текста
+        androidx.compose.material3.Surface {
+            NameField(
+                name = "Amin",
+                onNameChange = {}
+            )
+        }
     }
 }
